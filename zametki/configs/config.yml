@@ -1,0 +1,4 @@
+port: "8080"
+db_port: "8889"
+storage: "postgres"
+storageTypes: "postgres,inMemory"

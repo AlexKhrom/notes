@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Заметки</title>
+</head>
+<body onload="makeReqGetNotes()">
+<div style="width: 350px;margin: auto;padding: 20px">
+    <h2 style="text-align: center">Новая заметка</h2>
+    <input id="inputCreat">
+    <button onclick="makeReqNewNote()">создать</button>
+</div>
+<div style="width: 350px;margin: auto;padding: 20px">
+    <h2 style="text-align: center">мои заметки</h2>
+    <h2 id="answerGetNotes"></h2>
+</div>
+</body>
+</html>
+<style>
+    input {
+        text-align: start;
+        width: 300px;
+        height: 150px;
+        border-radius: 5px;
+        border: 1px solid black;
+        font-size: 18px;
+        display: block;
+        margin: auto;
+    }
+
+    button {
+        display: block;
+        width: 150px;
+        height: 50px;
+        border-radius: 5px;
+        border: 1px solid black;
+        font-size: 18px;
+        background-color: white;
+        display: block;
+        margin: auto;
+        margin-top: 20px;
+    }
+
+    button:hover {
+        background-color: dimgray;
+    }
+    .notes{
+        width: 300px;
+    }
+    .notes a{
+        float: right;
+    }
+</style>
+<script>
+    async function makeReqGetNotes() {
+        console.log("hi get notes")
+        let response = await fetch('/api/getNotes', {
+            method: 'GET',
+        });
+        if (response.ok) {
+            let respJson = await response.json()
+            console.log(respJson.URL)
+            console.log("okkkk")
+            for(let i=0;i<respJson.length;i++){
+                document.getElementById("answerGetNotes").innerHTML += "<div class='notes'>" + respJson[i].text +"<a style='font-size: 12px' onclick='makeReqDeleteNote("+respJson[i].id+")'>удалить</a></div>"
+                console.log(respJson[i])
+            }
+        } else if (response.status > 299 && response.status < 500) {
+            console.log("err")
+
+        } else if (response.status > 500) {
+            console.log("some wrong on backend")
+        }
+    }
+
+    async function makeReqNewNote() {
+        console.log("hi new note")
+
+        let text = document.getElementById("inputCreat").value
+        console.log("text = ",text)
+
+        let response = await fetch('/api/newNote', {
+            method: 'POST',
+            body: JSON.stringify({text: text}),
+        });
+        if (response.ok) {
+            console.log("okkkk")
+            location.reload()
+        } else if (response.status > 299 && response.status < 500) {
+            console.log("err")
+
+        } else if (response.status > 500) {
+            console.log("some wrong on backend")
+        }
+    }
+
+    async function makeReqDeleteNote(id) {
+        console.log("hi delete note")
+
+        let response = await fetch('/api/deleteNote', {
+            method: 'POST',
+            body: JSON.stringify({id: id}),
+        });
+        if (response.ok) {
+            console.log("okkkk")
+            location.reload()
+        } else if (response.status > 299 && response.status < 500) {
+            console.log("err")
+
+        } else if (response.status > 500) {
+            console.log("some wrong on backend")
+        }
+    }
+
+</script>
